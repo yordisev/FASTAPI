@@ -7,9 +7,9 @@ archivos = APIRouter()
 
 
 @archivos.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    with open(getcwd() + "/" + file.filename, "wb") as myfile:
-        content = await file.read()
+async def upload_file(archivo: UploadFile = File(...)):
+    with open(getcwd() + "/" + archivo.filename, "wb") as myfile:
+        content = await archivo.read()
         myfile.write(content)
         myfile.close()
     return "success"
