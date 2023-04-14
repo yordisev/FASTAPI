@@ -28,12 +28,10 @@ def crear_usuario(payload: Login):
         if result:
             if check_password_hash(password, _password):
                 cursor.close()
-                return JSONResponse({'message' : 'You are logged in successfully'})
+                return JSONResponse(content={'message' : 'You are logged in successfully'},status_code=404)
             else:
-                resp = JSONResponse({'message' : 'Bad Request - invalid password'})
-                resp.status_code = 400
+                resp = JSONResponse(content={'message' : 'Bad Request - invalid password'},status_code=404)
                 return resp
     else:
-        resp = JSONResponse({'message' : 'Bad Request - invalid credendtials'})
-        resp.status_code = 400
+        resp = JSONResponse(content={'message' : 'Bad Request - invalid credendtials'},status_code=404)
         return resp
