@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from werkzeug.security import generate_password_hash
 from config.validar_key import Validar_Token
 from config.conexion import create_db_connection
 from schema.usuarios import Usuarios
@@ -46,10 +47,11 @@ def crear_usuario(request: Request,payload: Usuarios):
     if not Validar_Token(api_key):
         return JSONResponse({'mensaje': 'API Key inválida'}), 401
     usu = jsonable_encoder(payload)
+    passhash = generate_password_hash(usu['password'])
     connection = create_db_connection()
     cursor = connection.cursor(dictionary=True)
     query = "INSERT INTO db_usuarios(tipo_documento,numero_documento,nombres,apellidos,departamento,municipio,usuario, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    cursor.execute(query, (usu['tipo_documento'],usu['numero_documento'],usu['nombres'],usu['apellidos'],usu['departamento'],usu['municipio'],usu['usuario'], usu['password']))
+    cursor.execute(query, (usu['tipo_documento'],usu['numero_documento'],usu['nombres'],usu['apellidos'],usu['departamento'],usu['municipio'],usu['usuario'], passhash))
     connection.commit()
     cursor.close()
     connection.close()
