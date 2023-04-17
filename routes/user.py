@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from werkzeug.security import generate_password_hash
 from config.validar_key import Validar_Token
+from config.token import validate_token
 from config.conexion import create_db_connection
 from schema.usuarios import Usuarios
 
@@ -12,8 +13,10 @@ user = APIRouter()
 @user.get("/usuarios/listar",description="Get a list of all users",)
 def get_usuarios(request: Request):
     api_key = request.headers.get('autorizacion')
-    if not Validar_Token(api_key):
-        return JSONResponse({'mensaje': 'API Key inválida'}), 401
+    validatoken = validate_token(api_key)
+    # if not Validar_Token(api_key):
+    if not validatoken:
+        return JSONResponse({'mensaje': 'Token  inválido'}), 401
     connection = create_db_connection()
     cursor = connection.cursor(dictionary=True)
     query = "SELECT * FROM db_usuarios"
