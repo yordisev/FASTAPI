@@ -6,9 +6,29 @@ from config.validar_key import Validar_Token
 from config.token import validate_token
 from config.conexion import create_db_connection
 from schema.usuarios import Usuarios
-
+import socket
 user = APIRouter()
 
+@user.get("/hostname/{ip_cliente}")
+def read_client_pc_name(ip_cliente: str):
+    try:
+        pc_name = socket.gethostbyaddr(ip_cliente)[0]
+        
+    except socket.herror:
+        pc_name = "Nombre del PC no encontrado"
+    return {"nombre_pc": pc_name}
+
+@user.get("/puerto/{ip_cliente}")
+def read_client_puerto(ip_cliente: str):
+    port = 22
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(2)
+    resultado = sock.connect_ex((ip_cliente, port))
+    sock.close()
+    if resultado == 0:
+        return {"El Puerto Esta Abierto":ip_cliente}
+    else:
+        return {"El Puerto Esta Cerrado":ip_cliente}
 
 @user.get("/usuarios/listar",description="Get a list of all users",)
 def get_usuarios(request: Request):
