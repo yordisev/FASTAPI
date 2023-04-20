@@ -18,12 +18,11 @@ def read_client_pc_name(ip_cliente: str):
         pc_name = "Nombre del PC no encontrado"
     return {"nombre_pc": pc_name}
 
-@user.get("/puerto/{ip_cliente}")
-def read_client_puerto(ip_cliente: str):
-    port = 22
+@user.get("/puerto/{ip_cliente}&{puerto}")
+def read_client_puerto(ip_cliente: str,puerto: int):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(2)
-    resultado = sock.connect_ex((ip_cliente, port))
+    resultado = sock.connect_ex((ip_cliente, puerto))
     sock.close()
     if resultado == 0:
         return {"El Puerto Esta Abierto":ip_cliente}
